@@ -10,7 +10,7 @@ const flags = log.LstdFlags | log.Lshortfile
 
 var (
 	infoLog  = log.New(os.Stdout, color.New(color.FgBlue).Sprint("INFO  "), flags)
-	printLog = log.New(os.Stdout, "      ", flags)
+	printLog = log.New(os.Stdout, ".     ", flags)
 	errorLog = log.New(os.Stdout, color.New(color.FgRed).Sprint("ERROR "), flags)
 	debugLog = log.New(os.Stdout, color.New(color.FgGreen).Sprint("DEBUG "), flags)
 )
