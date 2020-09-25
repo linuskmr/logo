@@ -5,7 +5,7 @@ import (
 )
 
 func TestMyLogger_Info(t *testing.T) {
-	Info("Info")
+	Info("Info", "Test")
 }
 
 func TestPrint(t *testing.T) {
