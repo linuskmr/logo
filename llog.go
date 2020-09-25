@@ -14,8 +14,8 @@ const flags = log.LstdFlags | log.Lshortfile
 var (
 	infoPrefix  = color.New(color.FgBlue).Sprint("INFO")
 	printPrefix = "PRINT"
-	errorPrefix = color.New(color.FgRed).Sprint("ERROR ")
-	debugPrefix = color.New(color.FgGreen).Sprint("DEBUG ")
+	errorPrefix = color.New(color.FgRed).Sprint("ERROR")
+	debugPrefix = color.New(color.FgGreen).Sprint("DEBUG")
 )
 
 func shortFilename(filename string) string {

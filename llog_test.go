@@ -5,9 +5,17 @@ import (
 )
 
 func TestMyLogger_Info(t *testing.T) {
-	Info("Hallo", "Linus")
+	Info("Info")
 }
 
 func TestPrint(t *testing.T) {
-	Print("Hallo")
+	Print("Print")
+}
+
+func TestError(t *testing.T) {
+	Error("Error")
+}
+
+func TestDebug(t *testing.T) {
+	Debug("Debug")
 }
