@@ -3,85 +3,26 @@ package llog
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"io"
-	"os"
-	"runtime"
 	"strings"
-	"time"
 )
 
-var (
-	infoPrefix  = color.New(color.FgBlue).Sprint("INFO ")
-	printPrefix = "PRINT"
-	errorPrefix = color.New(color.FgRed).Sprint("ERROR")
-	debugPrefix = color.New(color.FgGreen).Sprint("DEBUG")
-)
-
-const (
-	stdLongYear  = "2006"
-	stdZeroMonth = "01"
-	stdZeroDay   = "02"
-
-	stdHour        = "15"
-	stdZeroMinute  = "04"
-	stdZeroSecond  = "05"
-	stdMillisecond = ".000"
-)
-
-const (
-	dateFormat = stdLongYear + "-" + stdZeroMonth + "-" + stdZeroDay
-	timeFormat = stdHour + ":" + stdZeroMinute + ":" + stdZeroSecond
-)
-
-const (
-	FlagDate = 1 << iota
-	FlagTime
-	FlagMillis
-	FlagFilename
-	FlagFuncName
-)
-
-var (
-	Output io.Writer = os.Stdout
-	Flags            = FlagDate | FlagTime | FlagMillis | FlagFilename | FlagFuncName
-)
-
-func shortFilename(filename string) string {
-	filePath := strings.Split(filename, "/")
-	return filePath[len(filePath)-1]
+var modeText = []string{
+	DebugMode: color.New(color.FgGreen).Sprint("DEBUG"),
+	InfoMode:  color.New(color.FgBlue).Sprint("INFO "),
+	WarnMode:  color.New(color.FgYellow).Sprint("WARN "),
+	ErrorMode: color.New(color.FgRed).Sprint("ERROR"),
+	PrintMode: "PRINT",
 }
 
-func currentTime() string {
-	var output strings.Builder
-	timeNow := time.Now()
-	if Flags&FlagDate != 0 && Flags&FlagTime != 0 {
-		output.WriteString(timeNow.Format(dateFormat + " " + timeFormat))
-	} else if Flags&FlagDate != 0 {
-		output.WriteString(timeNow.Format(dateFormat))
-	} else if Flags&FlagTime != 0 {
-		output.WriteString(timeNow.Format(timeFormat))
-	}
-	if Flags&FlagMillis != 0 {
-		output.WriteString(timeNow.Format(stdMillisecond))
-	}
-	return output.String()
-}
+type Mode uint8
 
-func header(mode string) string {
-	caller, file, line, _ := runtime.Caller(2)
-	functionName := runtime.FuncForPC(caller).Name()
-
-	var headers []string
-	headers = append(headers, mode)
-	headers = append(headers, currentTime())
-	if Flags&FlagFilename != 0 {
-		headers = append(headers, fmt.Sprintf("%s:%d", shortFilename(file), line))
-	}
-	if Flags&FlagFuncName != 0 {
-		headers = append(headers, shortFilename(functionName))
-	}
-	return strings.Join(headers, " ") + ":"
-}
+const (
+	DebugMode = 1 << Mode(iota)
+	InfoMode
+	WarnMode
+	ErrorMode
+	PrintMode
+)
 
 func spaceJoiner(v ...interface{}) string {
 	var out []string
@@ -92,7 +33,7 @@ func spaceJoiner(v ...interface{}) string {
 }
 
 func Info(v ...interface{}) {
-	fmt.Fprintln(Output, header(infoPrefix), spaceJoiner(v...))
+	fmt.Fprintln(Output, NewEntry(InfoMode, v...))
 }
 
 func Error(v ...interface{}) {
@@ -105,4 +46,8 @@ func Debug(v ...interface{}) {
 
 func Print(v ...interface{}) {
 	fmt.Fprintln(Output, header(printPrefix), spaceJoiner(v...))
+}
+
+func Warn(v ...interface{}) {
+	fmt.Fprintln(Output, header(warnPrefix), spaceJoiner(v...))
 }

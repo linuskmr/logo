@@ -17,6 +17,7 @@ func TestInfo(t *testing.T) {
 		method         = "llog.TestInfo"
 	)
 	Info(mode)
+	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, "("+mode+")\\s+"+dateTimeMillis+"\\s("+filename+"):\\d+\\s("+method+": "+mode+")", stringBuilder.String())
 }
 
@@ -30,6 +31,21 @@ func TestDebug(t *testing.T) {
 		method         = "llog.TestDebug"
 	)
 	Debug(mode)
+	fmt.Println(stringBuilder.String())
+	assert.Regexp(t, "("+mode+")\\s+"+dateTimeMillis+"\\s("+filename+"):\\d+\\s("+method+": "+mode+")", stringBuilder.String())
+}
+
+func TestWarn(t *testing.T) {
+	stringBuilder := strings.Builder{}
+	Output = &stringBuilder
+	const (
+		mode           = "WARN"
+		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
+		filename       = "llog_test.go"
+		method         = "llog.TestWarn"
+	)
+	Warn(mode)
+	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, "("+mode+")\\s+"+dateTimeMillis+"\\s("+filename+"):\\d+\\s("+method+": "+mode+")", stringBuilder.String())
 }
 
@@ -43,6 +59,7 @@ func TestError(t *testing.T) {
 		method         = "llog.TestError"
 	)
 	Error(mode)
+	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, "("+mode+")\\s+"+dateTimeMillis+"\\s("+filename+"):\\d+\\s("+method+": "+mode+")", stringBuilder.String())
 }
 
@@ -56,10 +73,11 @@ func TestPrint(t *testing.T) {
 		method         = "llog.TestPrint"
 	)
 	Print(mode)
+	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, "("+mode+")\\s+"+dateTimeMillis+"\\s("+filename+"):\\d+\\s("+method+": "+mode+")", stringBuilder.String())
 }
 
-func TestFlags(t *testing.T) {
+func TestConfig(t *testing.T) {
 	stringBuilder := strings.Builder{}
 	Output = &stringBuilder
 	const (
@@ -70,28 +88,28 @@ func TestFlags(t *testing.T) {
 		filename = "llog_test.go"
 		method   = "llog.TestPrint"
 	)
-	Flags = FlagDate
+	Config(FlagDate)
 	Print(mode)
 	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, "("+mode+")\\s+"+date+":\\s("+mode+")", stringBuilder.String())
 	stringBuilder.Reset()
 
-	Flags = FlagTime
+	Config(FlagTime)
 	Print(mode)
 	assert.Regexp(t, "("+mode+")\\s+"+time+":\\s("+mode+")", stringBuilder.String())
 	stringBuilder.Reset()
 
-	Flags = FlagMillis
+	Config(FlagMillis)
 	Print(mode)
 	assert.Regexp(t, "("+mode+")\\s+"+millis+":\\s("+mode+")", stringBuilder.String())
 	stringBuilder.Reset()
 
-	Flags = FlagDate | FlagTime
+	Config(FlagDate | FlagTime)
 	Print(mode)
 	assert.Regexp(t, "("+mode+")\\s+"+date+"\\s"+time+":\\s("+mode+")", stringBuilder.String())
 	stringBuilder.Reset()
 
-	Flags = FlagDate | FlagTime | FlagMillis
+	Config(FlagDate | FlagTime | FlagMillis)
 	Print(mode)
 	assert.Regexp(t, "("+mode+")\\s+"+date+"\\s"+time+millis+":\\s("+mode+")", stringBuilder.String())
 	stringBuilder.Reset()
