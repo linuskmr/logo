@@ -33,21 +33,21 @@ func spaceJoiner(v ...interface{}) string {
 }
 
 func Info(v ...interface{}) {
-	fmt.Fprintln(Output, NewEntry(InfoMode, v...))
+	fmt.Fprintln(Output, NewEntry(InfoMode, spaceJoiner(v...)))
 }
 
 func Error(v ...interface{}) {
-	fmt.Fprintln(Output, header(errorPrefix), spaceJoiner(v...))
+	fmt.Fprintln(Output, NewEntry(InfoMode, spaceJoiner(v...)))
 }
 
 func Debug(v ...interface{}) {
-	fmt.Fprintln(Output, header(debugPrefix), spaceJoiner(v...))
+	fmt.Fprintln(Output, NewEntry(InfoMode, spaceJoiner(v...)))
 }
 
 func Print(v ...interface{}) {
-	fmt.Fprintln(Output, header(printPrefix), spaceJoiner(v...))
+	fmt.Fprintln(Output, NewEntry(InfoMode, spaceJoiner(v...)))
 }
 
 func Warn(v ...interface{}) {
-	fmt.Fprintln(Output, header(warnPrefix), spaceJoiner(v...))
+	fmt.Fprintln(Output, NewEntry(InfoMode, spaceJoiner(v...)))
 }
