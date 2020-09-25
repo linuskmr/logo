@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	infoPrefix  = color.New(color.FgBlue).Sprint("INFO ")
+	infoPrefix  = color.New(color.FgBlue).Sprint("INFO")
 	printPrefix = "PRINT"
-	errorPrefix = color.New(color.FgRed).Sprint("ERRO")
+	errorPrefix = color.New(color.FgRed).Sprint("ERROR")
 	debugPrefix = color.New(color.FgGreen).Sprint("DEBUG")
 )
 
@@ -23,7 +23,7 @@ func shortFilename(filename string) string {
 func header(mode string) string {
 	caller, file, line, _ := runtime.Caller(2)
 	functionName := runtime.FuncForPC(caller).Name()
-	return fmt.Sprintf("%-5s %s:%d %s:", mode, shortFilename(file), line, shortFilename(functionName))
+	return fmt.Sprintf(`%-5s %s:%d %s:`, mode, shortFilename(file), line, shortFilename(functionName))
 }
 
 func Info(v ...interface{}) {
