@@ -25,7 +25,7 @@ const (
 	stdHour        = "15"
 	stdZeroMinute  = "04"
 	stdZeroSecond  = "05"
-	stdMillisecond = "000"
+	stdMillisecond = ".000"
 )
 
 const (
@@ -34,13 +34,16 @@ const (
 )
 
 const (
-	Fdate = 1 << iota
-	Ftime
+	FlagDate = 1 << iota
+	FlagTime
+	FlagMillis
+	FlagFilename
+	FlagFuncName
 )
 
 var (
 	Output io.Writer = os.Stdout
-	Flags            = Fdate | Ftime
+	Flags            = FlagDate | FlagTime | FlagMillis | FlagFilename | FlagFuncName
 )
 
 func shortFilename(filename string) string {
@@ -49,22 +52,35 @@ func shortFilename(filename string) string {
 }
 
 func currentTime() string {
-	if Flags&Fdate != 0 && Flags&Ftime != 0 {
-		return time.Now().Format(dateFormat + " " + timeFormat)
+	var output strings.Builder
+	timeNow := time.Now()
+	if Flags&FlagDate != 0 && Flags&FlagTime != 0 {
+		output.WriteString(timeNow.Format(dateFormat + " " + timeFormat))
+	} else if Flags&FlagDate != 0 {
+		output.WriteString(timeNow.Format(dateFormat))
+	} else if Flags&FlagTime != 0 {
+		output.WriteString(timeNow.Format(timeFormat))
 	}
-	if Flags&Fdate != 0 {
-		return time.Now().Format(dateFormat)
+	if Flags&FlagMillis != 0 {
+		output.WriteString(timeNow.Format(stdMillisecond))
 	}
-	if Flags&Ftime != 0 {
-		return time.Now().Format(timeFormat)
-	}
-	return ""
+	return output.String()
 }
 
 func header(mode string) string {
 	caller, file, line, _ := runtime.Caller(2)
 	functionName := runtime.FuncForPC(caller).Name()
-	return fmt.Sprintf(`%s %s %s:%d %s:`, mode, currentTime(), shortFilename(file), line, shortFilename(functionName))
+
+	var headers []string
+	headers = append(headers, mode)
+	headers = append(headers, currentTime())
+	if Flags&FlagFilename != 0 {
+		headers = append(headers, fmt.Sprintf("%s:%d", shortFilename(file), line))
+	}
+	if Flags&FlagFuncName != 0 {
+		headers = append(headers, shortFilename(functionName))
+	}
+	return strings.Join(headers, " ") + ":"
 }
 
 func spaceJoiner(v ...interface{}) string {
