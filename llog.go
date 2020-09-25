@@ -17,7 +17,7 @@ var modeText = []string{
 type Mode uint8
 
 const (
-	DebugMode = 1 << Mode(iota)
+	DebugMode = Mode(iota)
 	InfoMode
 	WarnMode
 	ErrorMode
