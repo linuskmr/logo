@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	infoPrefix  = color.New(color.FgBlue).Sprint("INFO")
+	infoPrefix  = color.New(color.FgBlue).Sprint("INFO ")
 	printPrefix = "PRINT"
 	errorPrefix = color.New(color.FgRed).Sprint("ERRO")
 	debugPrefix = color.New(color.FgGreen).Sprint("DEBUG")
