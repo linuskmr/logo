@@ -12,7 +12,7 @@ import (
 
 func TestInfo(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Output = &stringBuilder
+	OutputWriter = &stringBuilder
 	const (
 		mode           = "INFO"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -26,7 +26,7 @@ func TestInfo(t *testing.T) {
 
 func TestDebug(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Output = &stringBuilder
+	OutputWriter = &stringBuilder
 	const (
 		mode           = "DEBUG"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -40,7 +40,7 @@ func TestDebug(t *testing.T) {
 
 func TestWarn(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Output = &stringBuilder
+	OutputWriter = &stringBuilder
 	const (
 		mode           = "WARN"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -54,7 +54,7 @@ func TestWarn(t *testing.T) {
 
 func TestError(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Output = &stringBuilder
+	OutputWriter = &stringBuilder
 	const (
 		mode           = "ERROR"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -68,7 +68,7 @@ func TestError(t *testing.T) {
 
 func TestPrint(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Output = &stringBuilder
+	OutputWriter = &stringBuilder
 	const (
 		mode           = "PRINT"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -82,7 +82,7 @@ func TestPrint(t *testing.T) {
 
 func TestConfig(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Output = &stringBuilder
+	OutputWriter = &stringBuilder
 	const (
 		mode     = "PRINT"
 		date     = "\\d\\d\\d\\d-\\d\\d-\\d\\d"
@@ -120,7 +120,7 @@ func TestConfig(t *testing.T) {
 
 func TestJson(t *testing.T) {
 	var stringBuilder strings.Builder
-	Output = &stringBuilder
+	OutputWriter = &stringBuilder
 	Config(1<<6 - 1)
 	Print("Print")
 	fmt.Println(stringBuilder.String())
@@ -137,7 +137,7 @@ func TestJson(t *testing.T) {
 }
 
 func BenchmarkInfo(b *testing.B) {
-	Output = ioutil.Discard
+	OutputWriter = ioutil.Discard
 	for i := 0; i < b.N; i++ {
 		Info(i)
 	}

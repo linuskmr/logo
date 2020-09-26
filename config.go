@@ -17,15 +17,15 @@ const (
 )
 
 var (
-	Date                 = true
-	Time                 = true
-	Millis               = true
-	Filename             = true
-	Funcname             = true
-	Json                 = false
-	Output     io.Writer = os.Stdout
-	DateFormat           = stdLongYear + "-" + stdZeroMonth + "-" + stdZeroDay
-	TimeFormat           = stdHour + ":" + stdZeroMinute + ":" + stdZeroSecond
+	Date                   = true
+	Time                   = true
+	Millis                 = true
+	Filename               = true
+	Funcname               = true
+	Json                   = false
+	OutputWriter io.Writer = os.Stdout
+	DateFormat             = stdLongYear + "-" + stdZeroMonth + "-" + stdZeroDay
+	TimeFormat             = stdHour + ":" + stdZeroMinute + ":" + stdZeroSecond
 )
 
 func Config(flags Flag) {

@@ -43,5 +43,7 @@ func Warn(v ...interface{}) {
 }
 
 func log(mode string, v []interface{}) {
-	Output.Write(NewEntry(mode, spaceJoiner(v)).ByteArr())
+	output := NewEntry(mode, spaceJoiner(v)).ByteArr()
+	output = append(output, []byte("\n")...)
+	OutputWriter.Write(output)
 }
