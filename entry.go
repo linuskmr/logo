@@ -2,6 +2,7 @@ package llog
 
 import (
 	"encoding/json"
+	"github.com/fatih/color"
 	"runtime"
 	"strconv"
 	"strings"
@@ -17,6 +18,22 @@ const (
 	ErrorMode
 	PrintMode
 )
+
+var modeText = [...]string{
+	DebugMode: "DEBUG",
+	InfoMode:  "INFO",
+	WarnMode:  "WARN",
+	ErrorMode: "ERROR",
+	PrintMode: "PRINT",
+}
+
+var modeColors = [...]*color.Color{
+	DebugMode: color.New(color.FgGreen).Add(color.Bold),
+	InfoMode:  color.New(color.FgBlue).Add(color.Bold),
+	WarnMode:  color.New(color.FgYellow).Add(color.Bold),
+	ErrorMode: color.New(color.FgRed).Add(color.Bold),
+	PrintMode: color.New(color.FgBlack).Add(color.Bold),
+}
 
 type Entry struct {
 	Mode     Mode    `json:"mode"`
