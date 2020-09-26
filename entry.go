@@ -3,40 +3,47 @@ package llog
 import (
 	"encoding/json"
 	"github.com/fatih/color"
-	"runtime"
-	"strconv"
 	"strings"
-	"time"
 )
 
-type Mode uint8
+// A log level
+type Level uint8
 
 const (
-	DebugMode = Mode(iota)
-	InfoMode
-	WarnMode
-	ErrorMode
-	PrintMode
+	// The log Level's following are sorted in ascending order of priority. AllLevels
+	// = PrintLevel, DebugLevel, InfoLevel, WarnLevel, ErrorLevel. So the highest
+	// LogLevel is ErrorLevel, the lowest is AllLevels = PrintLevel. A message is only logged if
+	// its level is greater or equal to the loglevel of the logger.
+	PrintLevel = Level(iota)
+	DebugLevel
+	InfoLevel
+	WarnLevel
+	ErrorLevel
+	AllLevels = PrintLevel
 )
 
-var modeText = [...]string{
-	DebugMode: "DEBUG",
-	InfoMode:  "INFO",
-	WarnMode:  "WARN",
-	ErrorMode: "ERROR",
-	PrintMode: "PRINT",
+// Texts for the log Level's.
+var levelTexts = [...]string{
+	DebugLevel: "DEBUG",
+	InfoLevel:  "INFO",
+	WarnLevel:  "WARN",
+	ErrorLevel: "ERROR",
+	PrintLevel: "PRINT",
 }
 
-var modeColors = [...]*color.Color{
-	DebugMode: color.New(color.FgGreen).Add(color.Bold),
-	InfoMode:  color.New(color.FgBlue).Add(color.Bold),
-	WarnMode:  color.New(color.FgYellow).Add(color.Bold),
-	ErrorMode: color.New(color.FgRed).Add(color.Bold),
-	PrintMode: color.New(color.FgBlack).Add(color.Bold),
+// Colors for the Level's.
+var levelColors = [...]*color.Color{
+	DebugLevel: color.New(color.FgGreen).Add(color.Bold),
+	InfoLevel:  color.New(color.FgBlue).Add(color.Bold),
+	WarnLevel:  color.New(color.FgYellow).Add(color.Bold),
+	ErrorLevel: color.New(color.FgRed).Add(color.Bold),
+	PrintLevel: color.New(color.FgBlack).Add(color.Bold),
 }
 
+// A Logger Entry.
 type Entry struct {
-	Mode     Mode    `json:"mode"`
+	// Information about the Entry.
+	Level    Level   `json:"level"`
 	Date     *string `json:"date,omitempty"`
 	Time     *string `json:"time,omitempty"`
 	Msg      *string `json:"msg,omitempty"`
@@ -44,45 +51,9 @@ type Entry struct {
 	FuncName *string `json:"func_name,omitempty"`
 }
 
-func NewEntry(mode Mode, msg string) *Entry {
-	entry := Entry{Mode: mode, Msg: &msg}
-
-	// Add date and time
-	timeNow := time.Now()
-	if Date {
-		dateStr := timeNow.Format(DateFormat)
-		entry.Date = &dateStr
-	}
-	if Time {
-		timeStr := timeNow.Format(TimeFormat)
-		entry.Time = &timeStr
-	}
-	if Millis {
-		millisStr := timeNow.Format(stdMillisecond)
-		if entry.Time == nil {
-			emptyStr := ""
-			entry.Time = &emptyStr
-		}
-		timeStr := *entry.Time + millisStr
-		entry.Time = &timeStr
-	}
-
-	// Add file and line
-	caller, file, line, _ := runtime.Caller(3)
-	if Filename {
-		filenameStr := shortFilename(file) + ":" + strconv.Itoa(line)
-		entry.Filename = &filenameStr
-	}
-	if Funcname {
-		funcNameStr := shortFilename(runtime.FuncForPC(caller).Name())
-		entry.FuncName = &funcNameStr
-	}
-
-	return &entry
-}
-
-func (entry *Entry) String() []byte {
-	params := []string{modeColors[entry.Mode].Sprintf("%-5s", modeText[entry.Mode])}
+// Converts an Entry to a string, with the Level colored (See levelColors).
+func (entry *Entry) String() string {
+	params := []string{levelColors[entry.Level].Sprintf("%-5s", levelTexts[entry.Level])}
 	if entry.Date != nil {
 		params = append(params, *entry.Date)
 	}
@@ -95,32 +66,26 @@ func (entry *Entry) String() []byte {
 	if entry.FuncName != nil {
 		params = append(params, *entry.FuncName)
 	}
-	return []byte(strings.Join(params, " ") + ": " + *entry.Msg)
+	return strings.Join(params, " ") + ": " + *entry.Msg
 }
 
+// Converts an Entry to a Json byte arr.
 func (entry *Entry) Json() []byte {
 	type Alias Entry
 	jsonByteArr, err := json.Marshal(&struct {
-		Mode string `json:"mode"`
+		Level string `json:"level"`
 		*Alias
 	}{
-		Mode:  modeText[entry.Mode],
+		Level: levelTexts[entry.Level],
 		Alias: (*Alias)(entry),
 	})
 	if err != nil {
-		return []byte("Could not convert to Json: " + string(entry.String()))
+		return []byte("Could not convert to Json: " + entry.String())
 	}
 	return jsonByteArr
 }
 
-func (entry *Entry) ByteArr() []byte {
-	if Json {
-		return entry.Json()
-	} else {
-		return entry.String()
-	}
-}
-
+// Shortens the filename to the last /.
 func shortFilename(filename string) string {
 	filePath := strings.Split(filename, "/")
 	return filePath[len(filePath)-1]
