@@ -2,6 +2,7 @@ package llog
 
 import (
 	"encoding/json"
+	"fmt"
 	"runtime"
 	"strconv"
 	"strings"
@@ -55,7 +56,7 @@ func NewEntry(mode string, msg string) *Entry {
 }
 
 func (entry *Entry) String() []byte {
-	params := []string{*entry.Mode}
+	params := []string{fmt.Sprintf("%-5s", *entry.Mode)}
 	if entry.Date != nil {
 		params = append(params, *entry.Date)
 	}

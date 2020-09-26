@@ -8,8 +8,8 @@ import (
 
 var (
 	DebugMode = color.New(color.FgGreen).Sprint("DEBUG")
-	InfoMode  = color.New(color.FgBlue).Sprint("INFO ")
-	WarnMode  = color.New(color.FgYellow).Sprint("WARN ")
+	InfoMode  = color.New(color.FgBlue).Sprint("INFO")
+	WarnMode  = color.New(color.FgYellow).Sprint("WARN")
 	ErrorMode = color.New(color.FgRed).Sprint("ERROR")
 	PrintMode = "PRINT"
 )
