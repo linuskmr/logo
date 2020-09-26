@@ -6,25 +6,15 @@ import (
 	"strings"
 )
 
-var modeText = []string{
-	DebugMode: color.New(color.FgGreen).Sprint("DEBUG"),
-	InfoMode:  color.New(color.FgBlue).Sprint("INFO "),
-	WarnMode:  color.New(color.FgYellow).Sprint("WARN "),
-	ErrorMode: color.New(color.FgRed).Sprint("ERROR"),
-	PrintMode: "PRINT",
-}
-
-type Mode uint8
-
-const (
-	DebugMode = Mode(iota)
-	InfoMode
-	WarnMode
-	ErrorMode
-	PrintMode
+var (
+	DebugMode = color.New(color.FgGreen).Sprint("DEBUG")
+	InfoMode  = color.New(color.FgBlue).Sprint("INFO ")
+	WarnMode  = color.New(color.FgYellow).Sprint("WARN ")
+	ErrorMode = color.New(color.FgRed).Sprint("ERROR")
+	PrintMode = "PRINT"
 )
 
-func spaceJoiner(v ...interface{}) string {
+func spaceJoiner(v []interface{}) string {
 	var out []string
 	for _, elem := range v {
 		out = append(out, fmt.Sprint(elem))
@@ -33,21 +23,25 @@ func spaceJoiner(v ...interface{}) string {
 }
 
 func Info(v ...interface{}) {
-	fmt.Fprintln(Output, NewEntry(InfoMode, spaceJoiner(v...)))
+	log(InfoMode, v)
 }
 
 func Error(v ...interface{}) {
-	fmt.Fprintln(Output, NewEntry(InfoMode, spaceJoiner(v...)))
+	log(ErrorMode, v)
 }
 
 func Debug(v ...interface{}) {
-	fmt.Fprintln(Output, NewEntry(InfoMode, spaceJoiner(v...)))
+	log(DebugMode, v)
 }
 
 func Print(v ...interface{}) {
-	fmt.Fprintln(Output, NewEntry(InfoMode, spaceJoiner(v...)))
+	log(PrintMode, v)
 }
 
 func Warn(v ...interface{}) {
-	fmt.Fprintln(Output, NewEntry(InfoMode, spaceJoiner(v...)))
+	log(WarnMode, v)
+}
+
+func log(mode string, v []interface{}) {
+	Output.Write(NewEntry(mode, spaceJoiner(v)).ByteArr())
 }
