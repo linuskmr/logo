@@ -6,38 +6,51 @@ import (
 	"strings"
 )
 
-// A log level
+// A log Level
 type Level uint8
 
 const (
-	// The log Level's following are sorted in ascending order of priority. AllLevels
-	// = PrintLevel, DebugLevel, InfoLevel, WarnLevel, ErrorLevel. So the highest
-	// LogLevel is ErrorLevel, the lowest is AllLevels = PrintLevel. A message is only logged if
-	// its level is greater or equal to the loglevel of the logger.
-	PrintLevel = Level(iota)
-	DebugLevel
+	// The log Level's following are sorted in ascending order of priority.
+	// DebugLevel(AllLevels), InfoLevel, WarnLevel, ErrorLevel and PrintLevel. So
+	// the highest Level is PrintLevel, the lowest is DebugLevel(PrintLevel). A
+	// Entry is only logged if its level is greater or equal to the Level of the
+	// Logger.
+	DebugLevel = Level(iota)
 	InfoLevel
 	WarnLevel
 	ErrorLevel
-	AllLevels = PrintLevel
+	PrintLevel
+	AllLevels = DebugLevel
 )
 
-// Texts for the log Level's.
-var levelTexts = [...]string{
-	DebugLevel: "DEBUG",
-	InfoLevel:  "INFO",
-	WarnLevel:  "WARN",
-	ErrorLevel: "ERROR",
-	PrintLevel: "PRINT",
-}
+// Text and color for each log Level.
+var levels = [...]struct {
+	// The text of the Level.
+	text string
 
-// Colors for the Level's.
-var levelColors = [...]*color.Color{
-	DebugLevel: color.New(color.FgGreen).Add(color.Bold),
-	InfoLevel:  color.New(color.FgBlue).Add(color.Bold),
-	WarnLevel:  color.New(color.FgYellow).Add(color.Bold),
-	ErrorLevel: color.New(color.FgRed).Add(color.Bold),
-	PrintLevel: color.New(color.FgBlack).Add(color.Bold),
+	// The color of the level.
+	color *color.Color
+}{
+	DebugLevel: {
+		text:  "DEBUG",
+		color: color.New(color.FgGreen).Add(color.Bold),
+	},
+	InfoLevel: {
+		text:  "INFO",
+		color: color.New(color.FgBlue).Add(color.Bold),
+	},
+	WarnLevel: {
+		text:  "WARN",
+		color: color.New(color.FgYellow).Add(color.Bold),
+	},
+	ErrorLevel: {
+		text:  "ERROR",
+		color: color.New(color.FgRed).Add(color.Bold),
+	},
+	PrintLevel: {
+		text:  "PRINT",
+		color: color.New(color.FgBlack).Add(color.Bold),
+	},
 }
 
 // A Logger Entry.
@@ -51,9 +64,9 @@ type Entry struct {
 	FuncName *string `json:"func_name,omitempty"`
 }
 
-// Converts an Entry to a string, with the Level colored (See levelColors).
+// Converts an Entry to a string, with the Level colored (See levels).
 func (entry *Entry) String() string {
-	params := []string{levelColors[entry.Level].Sprintf("%-5s", levelTexts[entry.Level])}
+	params := []string{levels[entry.Level].color.Sprintf("%-5s", levels[entry.Level].text)}
 	if entry.Date != nil {
 		params = append(params, *entry.Date)
 	}
@@ -76,7 +89,7 @@ func (entry *Entry) Json() []byte {
 		Level string `json:"level"`
 		*Alias
 	}{
-		Level: levelTexts[entry.Level],
+		Level: levels[entry.Level].text,
 		Alias: (*Alias)(entry),
 	})
 	if err != nil {

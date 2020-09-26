@@ -1,3 +1,6 @@
+// With the package llog you can log. You can log in Json or as string to any
+// io.Writer. There are different LogLevels (see Level) with corresponding
+// methods.
 package llog
 
 var Standard = New(DateFlag | TimeFlag | MillisFlag | FilenameFlag | FuncnameFlag)
