@@ -15,11 +15,11 @@ var modeText = [...]string{
 }
 
 var modeColors = [...]*color.Color{
-	DebugMode: color.New(color.FgGreen),
-	InfoMode:  color.New(color.FgBlue),
-	WarnMode:  color.New(color.FgYellow),
-	ErrorMode: color.New(color.FgRed),
-	PrintMode: color.New(color.FgBlack),
+	DebugMode: color.New(color.FgGreen).Add(color.Bold),
+	InfoMode:  color.New(color.FgBlue).Add(color.Bold),
+	WarnMode:  color.New(color.FgYellow).Add(color.Bold),
+	ErrorMode: color.New(color.FgRed).Add(color.Bold),
+	PrintMode: color.New(color.FgBlack).Add(color.Bold),
 }
 
 func spaceJoiner(v []interface{}) string {
