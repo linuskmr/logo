@@ -2,15 +2,24 @@ package llog
 
 import (
 	"encoding/json"
-	"fmt"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
 )
 
+type Mode uint8
+
+const (
+	DebugMode = Mode(iota)
+	InfoMode
+	WarnMode
+	ErrorMode
+	PrintMode
+)
+
 type Entry struct {
-	Mode     *string `json:"mode,omitempty"`
+	Mode     Mode    `json:"mode"`
 	Date     *string `json:"date,omitempty"`
 	Time     *string `json:"time,omitempty"`
 	Msg      *string `json:"msg,omitempty"`
@@ -18,8 +27,8 @@ type Entry struct {
 	FuncName *string `json:"func_name,omitempty"`
 }
 
-func NewEntry(mode string, msg string) *Entry {
-	entry := Entry{Mode: &mode, Msg: &msg}
+func NewEntry(mode Mode, msg string) *Entry {
+	entry := Entry{Mode: mode, Msg: &msg}
 
 	// Add date and time
 	timeNow := time.Now()
@@ -56,7 +65,7 @@ func NewEntry(mode string, msg string) *Entry {
 }
 
 func (entry *Entry) String() []byte {
-	params := []string{fmt.Sprintf("%-5s", *entry.Mode)}
+	params := []string{modeColors[entry.Mode].Sprintf("%-5s", modeText[entry.Mode])}
 	if entry.Date != nil {
 		params = append(params, *entry.Date)
 	}
@@ -73,11 +82,18 @@ func (entry *Entry) String() []byte {
 }
 
 func (entry *Entry) Json() []byte {
-	jsonStr, err := json.Marshal(entry)
+	type Alias Entry
+	jsonByteArr, err := json.Marshal(&struct {
+		Mode string `json:"mode"`
+		*Alias
+	}{
+		Mode:  modeText[entry.Mode],
+		Alias: (*Alias)(entry),
+	})
 	if err != nil {
 		return []byte("Could not convert to Json: " + string(entry.String()))
 	}
-	return jsonStr
+	return jsonByteArr
 }
 
 func (entry *Entry) ByteArr() []byte {

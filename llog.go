@@ -6,13 +6,21 @@ import (
 	"strings"
 )
 
-var (
-	DebugMode = color.New(color.FgGreen).Sprint("DEBUG")
-	InfoMode  = color.New(color.FgBlue).Sprint("INFO")
-	WarnMode  = color.New(color.FgYellow).Sprint("WARN")
-	ErrorMode = color.New(color.FgRed).Sprint("ERROR")
-	PrintMode = "PRINT"
-)
+var modeText = [...]string{
+	DebugMode: "DEBUG",
+	InfoMode:  "INFO",
+	WarnMode:  "WARN",
+	ErrorMode: "ERROR",
+	PrintMode: "PRINT",
+}
+
+var modeColors = [...]*color.Color{
+	DebugMode: color.New(color.FgGreen),
+	InfoMode:  color.New(color.FgBlue),
+	WarnMode:  color.New(color.FgYellow),
+	ErrorMode: color.New(color.FgRed),
+	PrintMode: color.New(color.FgBlack),
+}
 
 func spaceJoiner(v []interface{}) string {
 	var out []string
@@ -42,7 +50,7 @@ func Warn(v ...interface{}) {
 	log(WarnMode, v)
 }
 
-func log(mode string, v []interface{}) {
+func log(mode Mode, v []interface{}) {
 	output := NewEntry(mode, spaceJoiner(v)).ByteArr()
 	output = append(output, []byte("\n")...)
 	OutputWriter.Write(output)
