@@ -55,8 +55,7 @@ func NewEntry(mode string, msg string) *Entry {
 }
 
 func (entry *Entry) String() []byte {
-	params := make([]string, 6)
-	params = append(params, *entry.Mode)
+	params := []string{*entry.Mode}
 	if entry.Date != nil {
 		params = append(params, *entry.Date)
 	}
@@ -69,7 +68,6 @@ func (entry *Entry) String() []byte {
 	if entry.FuncName != nil {
 		params = append(params, *entry.FuncName)
 	}
-
 	return []byte(strings.Join(params, " ") + ": " + *entry.Msg)
 }
 

@@ -161,15 +161,3 @@ func BenchmarkWrite(b *testing.B) {
 		ioutil.Discard.Write([]byte(strconv.Itoa(i)))
 	}
 }
-
-func TestBenchAll(t *testing.T) {
-	infoRes := testing.Benchmark(BenchmarkInfo)
-	stdLogRes := testing.Benchmark(BenchmarkStdLog)
-	fmtPrintRes := testing.Benchmark(BenchmarkFmtPrint)
-	writeRes := testing.Benchmark(BenchmarkWrite)
-
-	fmt.Println("info", infoRes.NsPerOp(), "ns/op")
-	fmt.Println("stdLog", stdLogRes.NsPerOp(), "ns/op. So", infoRes.NsPerOp()/stdLogRes.NsPerOp(), "x faster than info")
-	fmt.Println("fmtPrint", fmtPrintRes.NsPerOp(), "ns/op. So", infoRes.NsPerOp()/fmtPrintRes.NsPerOp(), "x faster than info")
-	fmt.Println("write", writeRes.NsPerOp(), "ns/op. So", infoRes.NsPerOp()/writeRes.NsPerOp(), "x faster than info")
-}
