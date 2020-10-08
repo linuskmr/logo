@@ -19,7 +19,7 @@ var modeColors = [...]*color.Color{
 	InfoMode:  color.New(color.FgBlue).Add(color.Bold),
 	WarnMode:  color.New(color.FgYellow).Add(color.Bold),
 	ErrorMode: color.New(color.FgRed).Add(color.Bold),
-	PrintMode: color.New(color.FgBlack).Add(color.Bold),
+	PrintMode: color.New(color.Reset).Add(color.Bold),
 }
 
 func spaceJoiner(v []interface{}) string {
