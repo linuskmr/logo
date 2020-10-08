@@ -1,57 +1,36 @@
+// With the package llog you can log. You can log in Json or as string to any
+// io.Writer. There are different LogLevels (see Level) with corresponding
+// methods.
 package llog
 
-import (
-	"fmt"
-	"github.com/fatih/color"
-	"strings"
-)
+var Standard = New(DateFlag | TimeFlag | MillisFlag | FilenameFlag | FuncnameFlag)
 
-var modeText = [...]string{
-	DebugMode: "DEBUG",
-	InfoMode:  "INFO",
-	WarnMode:  "WARN",
-	ErrorMode: "ERROR",
-	PrintMode: "PRINT",
-}
-
-var modeColors = [...]*color.Color{
-	DebugMode: color.New(color.FgGreen).Add(color.Bold),
-	InfoMode:  color.New(color.FgBlue).Add(color.Bold),
-	WarnMode:  color.New(color.FgYellow).Add(color.Bold),
-	ErrorMode: color.New(color.FgRed).Add(color.Bold),
-	PrintMode: color.New(color.Reset).Add(color.Bold),
-}
-
-func spaceJoiner(v []interface{}) string {
-	var out []string
-	for _, elem := range v {
-		out = append(out, fmt.Sprint(elem))
-	}
-	return strings.Join(out, " ")
-}
-
+// Logs a message with InfoLevel.
 func Info(v ...interface{}) {
-	log(InfoMode, v)
+	Standard.logDistance(InfoLevel, 1, v...)
 }
 
+// Logs a message with ErrorLevel.
 func Error(v ...interface{}) {
-	log(ErrorMode, v)
+	Standard.logDistance(ErrorLevel, 1, v...)
 }
 
+// Logs a message with DebugLevel.
 func Debug(v ...interface{}) {
-	log(DebugMode, v)
+	Standard.logDistance(DebugLevel, 1, v...)
 }
 
+// Logs a message with PrintLevel.
 func Print(v ...interface{}) {
-	log(PrintMode, v)
+	Standard.logDistance(PrintLevel, 1, v...)
 }
 
+// Logs a message with WarnLevel.
 func Warn(v ...interface{}) {
-	log(WarnMode, v)
+	Standard.logDistance(WarnLevel, 1, v...)
 }
 
-func log(mode Mode, v []interface{}) {
-	output := NewEntry(mode, spaceJoiner(v)).ByteArr()
-	output = append(output, []byte("\n")...)
-	OutputWriter.Write(output)
+// Logs a message with the given Level.
+func Log(level Level, v ...interface{}) {
+	Standard.logDistance(level, 1, v...)
 }

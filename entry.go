@@ -49,7 +49,7 @@ var levels = [...]struct {
 	},
 	PrintLevel: {
 		text:  "PRINT",
-		color: color.New(color.FgBlack).Add(color.Bold),
+		color: color.New(color.Reset).Add(color.Bold),
 	},
 }
 
