@@ -12,7 +12,7 @@ import (
 
 func TestInfo(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	OutputWriter = &stringBuilder
+	Standard.OutputWriter = &stringBuilder
 	const (
 		mode           = "INFO"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -20,13 +20,12 @@ func TestInfo(t *testing.T) {
 		method         = "llog.TestInfo"
 	)
 	Info(mode)
-	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, mode+`\s+`+dateTimeMillis+`\s`+filename+`:\d+\s`+method+`:\s`+mode, stringBuilder.String())
 }
 
 func TestDebug(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	OutputWriter = &stringBuilder
+	Standard.OutputWriter = &stringBuilder
 	const (
 		mode           = "DEBUG"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -34,13 +33,12 @@ func TestDebug(t *testing.T) {
 		method         = "llog.TestDebug"
 	)
 	Debug(mode)
-	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, mode+`\s+`+dateTimeMillis+`\s`+filename+`:\d+\s`+method+`:\s`+mode, stringBuilder.String())
 }
 
 func TestWarn(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	OutputWriter = &stringBuilder
+	Standard.OutputWriter = &stringBuilder
 	const (
 		mode           = "WARN"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -48,13 +46,12 @@ func TestWarn(t *testing.T) {
 		method         = "llog.TestWarn"
 	)
 	Warn(mode)
-	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, mode+`\s+`+dateTimeMillis+`\s`+filename+`:\d+\s`+method+`:\s`+mode, stringBuilder.String())
 }
 
 func TestError(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	OutputWriter = &stringBuilder
+	Standard.OutputWriter = &stringBuilder
 	const (
 		mode           = "ERROR"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -62,13 +59,12 @@ func TestError(t *testing.T) {
 		method         = "llog.TestError"
 	)
 	Error(mode)
-	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, mode+`\s+`+dateTimeMillis+`\s`+filename+`:\d+\s`+method+`:\s`+mode, stringBuilder.String())
 }
 
 func TestPrint(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	OutputWriter = &stringBuilder
+	Standard.OutputWriter = &stringBuilder
 	const (
 		mode           = "PRINT"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -76,13 +72,12 @@ func TestPrint(t *testing.T) {
 		method         = "llog.TestPrint"
 	)
 	Print(mode)
-	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, mode+`\s+`+dateTimeMillis+`\s`+filename+`:\d+\s`+method+`:\s`+mode, stringBuilder.String())
 }
 
 func TestConfig(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	OutputWriter = &stringBuilder
+	Standard.OutputWriter = &stringBuilder
 	const (
 		mode     = "PRINT"
 		date     = "\\d\\d\\d\\d-\\d\\d-\\d\\d"
@@ -91,28 +86,27 @@ func TestConfig(t *testing.T) {
 		filename = "llog_test.go"
 		method   = "llog.TestPrint"
 	)
-	Config(FlagDate)
+	Standard.Config(DateFlag)
 	Print(mode)
-	fmt.Println(stringBuilder.String())
 	assert.Regexp(t, mode+"\\s+"+date+":\\s"+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Config(FlagTime)
+	Standard.Config(TimeFlag)
 	Print(mode)
 	assert.Regexp(t, mode+"\\s+"+time+":\\s"+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Config(FlagMillis)
+	Standard.Config(MillisFlag)
 	Print(mode)
 	assert.Regexp(t, mode+"\\s+"+millis+":\\s"+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Config(FlagDate | FlagTime)
+	Standard.Config(DateFlag | TimeFlag)
 	Print(mode)
 	assert.Regexp(t, mode+"\\s+"+date+"\\s"+time+":\\s"+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Config(FlagDate | FlagTime | FlagMillis)
+	Standard.Config(DateFlag | TimeFlag | MillisFlag)
 	Print(mode)
 	assert.Regexp(t, mode+"\\s+"+date+"\\s"+time+millis+":\\s"+mode, stringBuilder.String())
 	stringBuilder.Reset()
@@ -120,12 +114,11 @@ func TestConfig(t *testing.T) {
 
 func TestJson(t *testing.T) {
 	var stringBuilder strings.Builder
-	OutputWriter = &stringBuilder
-	Config(1<<6 - 1)
+	Standard.OutputWriter = &stringBuilder
+	Standard.Config(1<<6 - 1)
 	Print("Print")
-	fmt.Println(stringBuilder.String())
 	var expected = []string{
-		`"mode":"PRINT"`,
+		`"level":"PRINT"`,
 		`"date":"\d\d\d\d-\d\d-\d\d"`,
 		`"time":"\d\d:\d\d:\d\d.\d\d\d"`,
 		`"msg":"Print"`,
@@ -137,7 +130,7 @@ func TestJson(t *testing.T) {
 }
 
 func BenchmarkInfo(b *testing.B) {
-	OutputWriter = ioutil.Discard
+	Standard.OutputWriter = ioutil.Discard
 	for i := 0; i < b.N; i++ {
 		Info(i)
 	}
