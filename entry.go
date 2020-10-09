@@ -9,12 +9,12 @@ import (
 // A log Level
 type Level uint8
 
+// The log Level's following are sorted in ascending order of priority.
+// DebugLevel(AllLevels), InfoLevel, WarnLevel, ErrorLevel and PrintLevel. So
+// the highest Level is PrintLevel, the lowest is DebugLevel(PrintLevel). A
+// Entry is only logged if its level is greater or equal to the Level of the
+// Logger.
 const (
-	// The log Level's following are sorted in ascending order of priority.
-	// DebugLevel(AllLevels), InfoLevel, WarnLevel, ErrorLevel and PrintLevel. So
-	// the highest Level is PrintLevel, the lowest is DebugLevel(PrintLevel). A
-	// Entry is only logged if its level is greater or equal to the Level of the
-	// Logger.
 	DebugLevel = Level(iota)
 	InfoLevel
 	WarnLevel

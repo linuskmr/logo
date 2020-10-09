@@ -12,7 +12,7 @@ import (
 
 func TestInfo(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Standard.OutputWriter = &stringBuilder
+	standard.OutputWriter = &stringBuilder
 	const (
 		mode           = "INFO"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -25,7 +25,7 @@ func TestInfo(t *testing.T) {
 
 func TestDebug(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Standard.OutputWriter = &stringBuilder
+	standard.OutputWriter = &stringBuilder
 	const (
 		mode           = "DEBUG"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -38,7 +38,7 @@ func TestDebug(t *testing.T) {
 
 func TestWarn(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Standard.OutputWriter = &stringBuilder
+	standard.OutputWriter = &stringBuilder
 	const (
 		mode           = "WARN"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -51,7 +51,7 @@ func TestWarn(t *testing.T) {
 
 func TestError(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Standard.OutputWriter = &stringBuilder
+	standard.OutputWriter = &stringBuilder
 	const (
 		mode           = "ERROR"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -64,7 +64,7 @@ func TestError(t *testing.T) {
 
 func TestPrint(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Standard.OutputWriter = &stringBuilder
+	standard.OutputWriter = &stringBuilder
 	const (
 		mode           = "PRINT"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -77,7 +77,7 @@ func TestPrint(t *testing.T) {
 
 func TestConfig(t *testing.T) {
 	stringBuilder := strings.Builder{}
-	Standard.OutputWriter = &stringBuilder
+	standard.OutputWriter = &stringBuilder
 	const (
 		mode     = "PRINT"
 		date     = "\\d\\d\\d\\d-\\d\\d-\\d\\d"
@@ -86,27 +86,27 @@ func TestConfig(t *testing.T) {
 		filename = "llog_test.go"
 		method   = "llog.TestPrint"
 	)
-	Standard.Config(DateFlag)
+	standard.Config(DateFlag)
 	Print(mode)
 	assert.Regexp(t, mode+"\\s+"+date+":\\s"+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Standard.Config(TimeFlag)
+	standard.Config(TimeFlag)
 	Print(mode)
 	assert.Regexp(t, mode+"\\s+"+time+":\\s"+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Standard.Config(MillisFlag)
+	standard.Config(MillisFlag)
 	Print(mode)
 	assert.Regexp(t, mode+"\\s+"+millis+":\\s"+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Standard.Config(DateFlag | TimeFlag)
+	standard.Config(DateFlag | TimeFlag)
 	Print(mode)
 	assert.Regexp(t, mode+"\\s+"+date+"\\s"+time+":\\s"+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Standard.Config(DateFlag | TimeFlag | MillisFlag)
+	standard.Config(DateFlag | TimeFlag | MillisFlag)
 	Print(mode)
 	assert.Regexp(t, mode+"\\s+"+date+"\\s"+time+millis+":\\s"+mode, stringBuilder.String())
 	stringBuilder.Reset()
@@ -114,8 +114,8 @@ func TestConfig(t *testing.T) {
 
 func TestJson(t *testing.T) {
 	var stringBuilder strings.Builder
-	Standard.OutputWriter = &stringBuilder
-	Standard.Config(1<<6 - 1)
+	standard.OutputWriter = &stringBuilder
+	standard.Config(1<<6 - 1)
 	Print("Print")
 	var expected = []string{
 		`"level":"PRINT"`,
@@ -130,7 +130,7 @@ func TestJson(t *testing.T) {
 }
 
 func BenchmarkInfo(b *testing.B) {
-	Standard.OutputWriter = ioutil.Discard
+	standard.OutputWriter = ioutil.Discard
 	for i := 0; i < b.N; i++ {
 		Info(i)
 	}
