@@ -1,7 +1,7 @@
-//
-package llog
+package logo
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -11,64 +11,46 @@ import (
 	"time"
 )
 
+// Logger with various configuration options regarding how and where to output.
 type Logger struct {
-	// Specifies whether the date should be displayed.
+	// Date specifies whether the date should be displayed.
 	Date bool
-
-	// Specifies whether the time should be displayed.
+	// Time specifies whether the time should be displayed.
 	Time bool
-
-	// Specifies whether the milliseconds should be displayed.
+	// Millis specifies whether the milliseconds should be displayed.
 	Millis bool
-
-	// Specifies whether the filename and line should be displayed that was logged.
+	// Filename specifies whether the filename and line should be displayed where the
+	// Logger was called.
 	Filename bool
-
-	// Specifies whether the struct and function should be displayed that was logged.
+	// Funcname specifies whether the struct and function should be displayed where
+	// the Logger was called.
 	Funcname bool
-
-	// Specifies whether the output should be in Json format.
+	// Json specifies whether the output should be in Json format.
 	Json bool
-
-	// The writer to which the log should be written.
-	OutputWriter io.Writer
-
-	// The date format of the output.
+	// Output is the writer to which the log should be written.
+	Output io.Writer
+	// DateFormat is the date format of the output.
 	DateFormat string
-
-	// The time format of the output.
+	// TimeFormat is the time format of the output.
 	TimeFormat string
-
-	// The log level of this logger. It only logs messages with a level greater or
-	// equal to the log level. To log everything, choose AllLevels. By default AllLevels is selected.
+	// Level is the log level of this logger. The logger only logs messages with a
+	// level greater or equal to the log level. By default AllLevels is selected,
+	// which logs everything.
 	Level Level
 }
 
-// A flag with which the logger can be configured.
-type Flag uint8
-
-const (
-	// Flag to configure the equivalent property in the logger.
-	DateFlag = 1 << Flag(iota)
-	TimeFlag
-	MillisFlag
-	FilenameFlag
-	FuncnameFlag
-	JsonFlag
-)
-
-// Creates a new Logger with the given flag.
+// New creates a new Logger with the given flags.
 func New(flag Flag) *Logger {
-	newLogger := Logger{
-		OutputWriter: os.Stdout,
-		DateFormat:   "2006-01-02",
-		TimeFormat:   "15:04:05",
+	logger := &Logger{
+		Output:     os.Stdout,
+		DateFormat: "2006-01-02",
+		TimeFormat: "15:04:05",
 	}
-	newLogger.Config(flag)
-	return &newLogger
+	logger.Config(flag)
+	return logger
 }
 
-// Configures the Logger according to the given flag.
+// Config configures the Logger according to the given flags.
 func (l *Logger) Config(flag Flag) {
 	l.Date = flag&DateFlag != 0
 	l.Time = flag&TimeFlag != 0
@@ -78,96 +60,102 @@ func (l *Logger) Config(flag Flag) {
 	l.Json = flag&JsonFlag != 0
 }
 
-// Creates a new Entry for a this Logger.
-func (l *Logger) entry(level Level, distance int, msg string) *Entry {
+// entry creates a new entry for a this Logger.
+func (l *Logger) newEntry(level Level, distance int, msg string) *entry {
+	// Increment distance to get the right funcname and line number of the original
+	// log call.
 	distance++
-	entry := Entry{Level: level, Msg: &msg}
+
+	e := &entry{Level: level, Msg: msg}
 
 	// Add date and time
 	timeNow := time.Now()
 	if l.Date {
 		dateStr := timeNow.Format(l.DateFormat)
-		entry.Date = &dateStr
+		e.Date = dateStr
 	}
 	if l.Time {
 		timeStr := timeNow.Format(l.TimeFormat)
-		entry.Time = &timeStr
+		e.Time = timeStr
 	}
 	if l.Millis {
+		// Append millis to e.Time
 		millisStr := timeNow.Format(".000")
-		if entry.Time == nil {
-			// Set entry.Time to empty string if it was nil to be able to attach milliseconds.
-			emptyStr := ""
-			entry.Time = &emptyStr
-		}
-		timeStr := *entry.Time + millisStr
-		entry.Time = &timeStr
+		e.Time += millisStr
 	}
 
 	// Add file and line
 	caller, file, line, _ := runtime.Caller(distance)
 	if l.Filename {
 		filenameStr := shortFilename(file) + ":" + strconv.Itoa(line)
-		entry.Filename = &filenameStr
+		e.Filename = filenameStr
 	}
 	if l.Funcname {
 		funcNameStr := shortFilename(runtime.FuncForPC(caller).Name())
-		entry.FuncName = &funcNameStr
+		e.FuncName = funcNameStr
 	}
-
-	return &entry
+	return e
 }
 
-// Logs a message with InfoLevel.
+// Info logs a message with InfoLevel.
 func (l *Logger) Info(v ...interface{}) {
-	l.logDistance(InfoLevel, 1, v...)
+	l.doLog(InfoLevel, 1, v...)
 }
 
-// Logs a message with ErrorLevel.
+// Error logs a message with ErrorLevel.
 func (l *Logger) Error(v ...interface{}) {
-	l.logDistance(ErrorLevel, 1, v...)
+	l.doLog(ErrorLevel, 1, v...)
 }
 
-// Logs a message with DebugLevel.
+// Debug logs a message with DebugLevel.
 func (l *Logger) Debug(v ...interface{}) {
-	l.logDistance(DebugLevel, 1, v...)
+	l.doLog(DebugLevel, 1, v...)
 }
 
-// Logs a message with PrintLevel.
+// Print logs a message with PrintLevel.
 func (l *Logger) Print(v ...interface{}) {
-	l.logDistance(PrintLevel, 1, v...)
+	l.doLog(PrintLevel, 1, v...)
 }
 
-// Logs a message with WarnLevel.
+// Warn logs a message with WarnLevel.
 func (l *Logger) Warn(v ...interface{}) {
-	l.logDistance(WarnLevel, 1, v...)
+	l.doLog(WarnLevel, 1, v...)
 }
 
-// Logs a message with the given Level.
+// Log logs a message with the given Level.
 func (l *Logger) Log(level Level, v ...interface{}) {
-	l.logDistance(level, 1, v...)
+	l.doLog(level, 1, v...)
 }
 
-// Logs a message with a given log level and the distance to the original
+// doLog logs a message with a given log Level and the distance to the original
 // call (needed for the filename and line number of the log message).
-func (l *Logger) logDistance(level Level, distance int, v ...interface{}) {
-	if l.OutputWriter == nil || level < l.Level {
+func (l *Logger) doLog(level Level, distance int, v ...interface{}) {
+	// Do not log if the output would not be visible anyway or log level is to low
+	if l.Output == nil || level < l.Level {
 		return
 	}
+
+	// Increment distance to get the right funcname and line number of the original
+	// log call.
 	distance++
-	var output []byte
 
 	// Format message in desired format
+	var output []byte
 	if l.Json {
-		output = l.entry(level, distance, spaceJoiner(v)).Json()
+		var err error
+		output, err = json.MarshalIndent(l.newEntry(level, distance, spaceJoiner(v)), "  ", "")
+		if err != nil {
+			output = []byte(err.Error())
+		}
 	} else {
-		output = []byte(l.entry(level, distance, spaceJoiner(v)).String())
+		output = []byte(l.newEntry(level, distance, spaceJoiner(v)).String())
 	}
 	output = append(output, []byte("\n")...)
-	l.OutputWriter.Write(output)
+	l.Output.Write(output)
 }
 
-// Gets the string representation of an array of interface{} and joins it with spaces.
+// spaceJoiner converts the array entries to string and joins them with a
+// whitespace.
 func spaceJoiner(v []interface{}) string {
 	var out []string
 	for _, elem := range v {
