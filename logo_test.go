@@ -11,104 +11,102 @@ import (
 )
 
 func TestInfo(t *testing.T) {
-	stringBuilder := strings.Builder{}
+	var stringBuilder strings.Builder
 	Standard.Output = &stringBuilder
 	const (
 		mode           = ".*INFO.*"
-		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
+		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
 		filename       = "logo_test.go"
-		method         = "llog.TestInfo"
+		method         = "logo.TestInfo"
 	)
 	Info(mode)
-	assert.Regexp(t, mode+`\s+`+dateTimeMillis+`\s`+filename+`:\d+\s`+method+`:\s`+mode, stringBuilder.String())
+	assert.Regexp(t, mode+` `+dateTimeMillis+` `+filename+`:\d+ `+method+`: `+mode, stringBuilder.String())
 }
 
 func TestDebug(t *testing.T) {
-	stringBuilder := strings.Builder{}
+	var stringBuilder strings.Builder
 	Standard.Output = &stringBuilder
 	const (
 		mode           = ".*DEBUG.*"
-		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
+		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
 		filename       = "logo_test.go"
-		method         = "llog.TestDebug"
+		method         = "logo.TestDebug"
 	)
 	Debug(mode)
-	assert.Regexp(t, mode+`\s+`+dateTimeMillis+`\s`+filename+`:\d+\s`+method+`:\s`+mode, stringBuilder.String())
+	assert.Regexp(t, mode+` +`+dateTimeMillis+` `+filename+`:\d+ `+method+`: `+mode, stringBuilder.String())
 }
 
 func TestWarn(t *testing.T) {
-	stringBuilder := strings.Builder{}
+	var stringBuilder strings.Builder
 	Standard.Output = &stringBuilder
 	const (
 		mode           = ".*WARN.*"
-		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
+		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
 		filename       = "logo_test.go"
-		method         = "llog.TestWarn"
+		method         = "logo.TestWarn"
 	)
 	Warn(mode)
-	assert.Regexp(t, mode+`\s+`+dateTimeMillis+`\s`+filename+`:\d+\s`+method+`:\s`+mode, stringBuilder.String())
+	assert.Regexp(t, mode+` +`+dateTimeMillis+` `+filename+`:\d+ `+method+`: `+mode, stringBuilder.String())
 }
 
 func TestError(t *testing.T) {
-	stringBuilder := strings.Builder{}
+	var stringBuilder strings.Builder
 	Standard.Output = &stringBuilder
 	const (
 		mode           = ".*ERROR.*"
-		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
+		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
 		filename       = "logo_test.go"
-		method         = "llog.TestError"
+		method         = "logo.TestError"
 	)
 	Error(mode)
-	assert.Regexp(t, mode+`\s+`+dateTimeMillis+`\s`+filename+`:\d+\s`+method+`:\s`+mode, stringBuilder.String())
+	assert.Regexp(t, mode+` +`+dateTimeMillis+` `+filename+`:\d+ `+method+`: `+mode, stringBuilder.String())
 }
 
 func TestPrint(t *testing.T) {
-	stringBuilder := strings.Builder{}
+	var stringBuilder strings.Builder
 	Standard.Output = &stringBuilder
 	const (
 		mode           = "PRINT"
-		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
+		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
 		filename       = "logo_test.go"
-		method         = "llog.TestPrint"
+		method         = "logo.TestPrint"
 	)
 	Print(mode)
-	assert.Regexp(t, mode+`\s+`+dateTimeMillis+`\s`+filename+`:\d+\s`+method+`:\s`+mode, stringBuilder.String())
+	assert.Regexp(t, mode+` +`+dateTimeMillis+` `+filename+`:\d+ `+method+`: `+mode, stringBuilder.String())
 }
 
 func TestConfig(t *testing.T) {
-	stringBuilder := strings.Builder{}
+	var stringBuilder strings.Builder
 	Standard.Output = &stringBuilder
 	const (
-		mode     = "PRINT"
-		date     = "\\d\\d\\d\\d-\\d\\d-\\d\\d"
-		time     = "\\d\\d:\\d\\d:\\d\\d"
-		millis   = ".\\d\\d\\d"
-		filename = "logo_test.go"
-		method   = "llog.TestPrint"
+		mode   = "PRINT"
+		date   = "\\d\\d\\d\\d-\\d\\d-\\d\\d"
+		time   = "\\d\\d:\\d\\d:\\d\\d"
+		millis = ".\\d\\d\\d"
 	)
 	Standard.Config(DateFlag)
 	Print(mode)
-	assert.Regexp(t, mode+"\\s+"+date+":\\s"+mode, stringBuilder.String())
+	assert.Regexp(t, mode+" +"+date+": "+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
 	Standard.Config(TimeFlag)
 	Print(mode)
-	assert.Regexp(t, mode+"\\s+"+time+":\\s"+mode, stringBuilder.String())
+	assert.Regexp(t, mode+" +"+time+": "+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
 	Standard.Config(MillisFlag)
 	Print(mode)
-	assert.Regexp(t, mode+"\\s+"+millis+":\\s"+mode, stringBuilder.String())
+	assert.Regexp(t, mode+" +"+millis+": "+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
 	Standard.Config(DateFlag | TimeFlag)
 	Print(mode)
-	assert.Regexp(t, mode+"\\s+"+date+"\\s"+time+":\\s"+mode, stringBuilder.String())
+	assert.Regexp(t, mode+" +"+date+" "+time+": "+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
 	Standard.Config(DateFlag | TimeFlag | MillisFlag)
 	Print(mode)
-	assert.Regexp(t, mode+"\\s+"+date+"\\s"+time+millis+":\\s"+mode, stringBuilder.String())
+	assert.Regexp(t, mode+" +"+date+" "+time+millis+": "+mode, stringBuilder.String())
 	stringBuilder.Reset()
 }
 
@@ -126,7 +124,7 @@ func TestJson(t *testing.T) {
 		`\s+"func_name":"logo.TestJson"`,
 	}
 
-	assert.Regexp(t, `{\n?`+strings.Join(expected, `,\n?`)+`\n?}`, stringBuilder.String())
+	assert.Regexp(t, `{\n?`+strings.Join(expected, `,\n?`)+`\n?\s+}`, stringBuilder.String())
 }
 
 func BenchmarkInfo(b *testing.B) {

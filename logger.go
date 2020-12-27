@@ -40,24 +40,24 @@ type Logger struct {
 }
 
 // New creates a new Logger with the given flags.
-func New(flag Flag) *Logger {
+func New(flags Flag) *Logger {
 	logger := &Logger{
 		Output:     os.Stdout,
 		DateFormat: "2006-01-02",
 		TimeFormat: "15:04:05",
 	}
-	logger.Config(flag)
+	logger.Config(flags)
 	return logger
 }
 
 // Config configures the Logger according to the given flags.
-func (l *Logger) Config(flag Flag) {
-	l.Date = flag&DateFlag != 0
-	l.Time = flag&TimeFlag != 0
-	l.Millis = flag&MillisFlag != 0
-	l.Filename = flag&FilenameFlag != 0
-	l.Funcname = flag&FuncnameFlag != 0
-	l.Json = flag&JsonFlag != 0
+func (l *Logger) Config(flags Flag) {
+	l.Date = flags&DateFlag != 0
+	l.Time = flags&TimeFlag != 0
+	l.Millis = flags&MillisFlag != 0
+	l.Filename = flags&FilenameFlag != 0
+	l.Funcname = flags&FuncnameFlag != 0
+	l.Json = flags&JsonFlag != 0
 }
 
 // entry creates a new entry for a this Logger.

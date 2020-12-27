@@ -14,5 +14,5 @@ func TestEntry_String(t *testing.T) {
 		Filename: "",
 		FuncName: "",
 	}
-	assert.Equal(t, "DEBUG:", e.String())
+	assert.Regexp(t, ".*DEBUG.*: .*", e.String())
 }
