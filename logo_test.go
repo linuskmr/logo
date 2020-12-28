@@ -116,15 +116,15 @@ func TestJson(t *testing.T) {
 	Standard.Config(1<<6 - 1)
 	Print("Print")
 	var expected = []string{
-		`\s+"level":"PRINT"`,
-		`\s+"date":"\d\d\d\d-\d\d-\d\d"`,
-		`\s+"time":"\d\d:\d\d:\d\d.\d\d\d"`,
-		`\s+"msg":"Print"`,
-		`\s+"filename":"logo_test.go:\d+"`,
-		`\s+"func_name":"logo.TestJson"`,
+		`\s+"level": "PRINT"`,
+		`\s+"date": "\d\d\d\d-\d\d-\d\d"`,
+		`\s+"time": "\d\d:\d\d:\d\d.\d\d\d"`,
+		`\s+"msg": "Print"`,
+		`\s+"filename": "logo_test.go:\d+"`,
+		`\s+"func_name": "logo.TestJson"`,
 	}
 
-	assert.Regexp(t, `{\n?`+strings.Join(expected, `,\n?`)+`\n?\s+}`, stringBuilder.String())
+	assert.Regexp(t, `{\n`+strings.Join(expected, `,\n?`)+`\n\s+}`, stringBuilder.String())
 }
 
 func BenchmarkInfo(b *testing.B) {
