@@ -43,7 +43,7 @@ The logger logs all log messages with a log level greater or equal its `logger.L
 | PrintLevel | Print()  | Normal |
 | AllLevels  | -        | -      |
 
-## Examples
+## Example
 
 ```go
 import "logo"
@@ -55,9 +55,8 @@ func main() {
     // PRINT: 2020-12-27 18:21:36.474 example.go:4 examples.main: Logging made easy
     // INFO : 2020-12-27 18:21:36.476 example.go:5 examples.main: Different colors
     // WARN : 2020-12-27 18:21:36.478 example.go:6 examples.main: Uh yellow now
-
-
-	logo.Config(logo.Time | logo.Millis)
+    
+    logo.Config(logo.Time | logo.Millis)
     logo.Error("Some config options")
     // WARN : 18:21:36.478: Some config options
     
