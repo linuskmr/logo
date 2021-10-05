@@ -4,16 +4,17 @@ package logo
 type Level uint8
 
 // The log Level's following are sorted in ascending order of priority.
-// DebugLevel(AllLevels), InfoLevel, WarnLevel, ErrorLevel and PrintLevel. So the
-// highest Level is PrintLevel, the lowest is DebugLevel(PrintLevel). A log
-// message is only logged if its Level is greater or equal to the Level of the
-// Logger.
+// DebugLevel(AllLevels), InfoLevel, WarnLevel, ErrorLevel, FatalLevel and
+// PrintLevel. So the highest Level is PrintLevel, the lowest is
+// DebugLevel(PrintLevel). A log message is only logged if its Level is greater
+// or equal to the Level of the Logger.
 const (
 	DebugLevel = Level(iota)
 	InfoLevel
 	WarnLevel
 	ErrorLevel
 	PrintLevel
+	FatalLevel
 	AllLevels = DebugLevel
 )
 
@@ -50,6 +51,10 @@ var levels = [...]levelNames{
 	ErrorLevel: {
 		name:          "ERROR",
 		colorizedName: "\033[31mERROR\033[0m",
+	},
+	FatalLevel: {
+		name:          "FATAL",
+		colorizedName: "\033[35mFATAL\033[0m",
 	},
 	PrintLevel: {
 		name:          "PRINT",

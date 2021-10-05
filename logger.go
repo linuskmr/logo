@@ -130,6 +130,12 @@ func (l *Logger) Warn(v ...interface{}) {
 	l.doLog(WarnLevel, 1, v...)
 }
 
+// Fatal logs a message with FatalLevel and panics with the message in v.
+func (l *Logger) Fatal(v ...interface{}) {
+	l.doLog(FatalLevel, 1, v...)
+	panic(spaceJoiner(v))
+}
+
 // Log logs a message with the given Level.
 func (l *Logger) Log(level Level, v ...interface{}) {
 	l.doLog(level, 1, v...)

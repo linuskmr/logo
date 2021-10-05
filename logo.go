@@ -42,6 +42,11 @@ func Warn(v ...interface{}) {
 	Default.doLog(WarnLevel, 1, v...)
 }
 
+// Fatal logs a message with FatalLevel and panics with the message in v.
+func Fatal(v ...interface{}) {
+	Default.doLog(WarnLevel, 1, v...)
+}
+
 // Log logs a message with the given Level.
 func Log(level Level, v ...interface{}) {
 	Default.doLog(level, 1, v...)
