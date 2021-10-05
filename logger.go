@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// Logger with various configuration options regarding how and where to output.
+// Logger logs messages with various configuration options.
 type Logger struct {
 	// Date specifies whether the date should be displayed.
 	Date bool
@@ -34,7 +34,7 @@ type Logger struct {
 	// TimeFormat is the time format of the output.
 	TimeFormat string
 	// Level is the log level of this logger. The logger only logs messages with a
-	// level greater or equal to the log level. By default AllLevels is selected,
+	// level greater or equal to the log level. By default, AllLevels is selected,
 	// which logs everything.
 	Level Level
 }
@@ -50,6 +50,13 @@ func New(flags Flag) *Logger {
 	return logger
 }
 
+// NewDefault creates a new Logger with default flags. If you want to create a
+// custom Logger, use New() instead or change the configuration options on the
+// returned Logger.
+func NewDefault() *Logger {
+	return New(DateFlag | TimeFlag | MillisFlag | FilenameFlag | FuncnameFlag)
+}
+
 // Config configures the Logger according to the given flags.
 func (l *Logger) Config(flags Flag) {
 	l.Date = flags&DateFlag != 0
@@ -60,7 +67,8 @@ func (l *Logger) Config(flags Flag) {
 	l.Json = flags&JsonFlag != 0
 }
 
-// entry creates a new entry for a this Logger.
+// newEntry creates a new entry for this Logger. level and msg are properties of
+// the created entry. distance is the stack distance to the caller of the log function.
 func (l *Logger) newEntry(level Level, distance int, msg string) *entry {
 	// Increment distance to get the right funcname and line number of the original
 	// log call.
@@ -127,10 +135,10 @@ func (l *Logger) Log(level Level, v ...interface{}) {
 	l.doLog(level, 1, v...)
 }
 
-// doLog logs a message with a given log Level and the distance to the original
+// doLog logs a message with the given log Level and the distance to the original
 // call (needed for the filename and line number of the log message).
 func (l *Logger) doLog(level Level, distance int, v ...interface{}) {
-	// Do not log if the output would not be visible anyway or log level is to low
+	// Do not log if the output would not be visible anyway or log level is too low
 	if l.Output == nil || level < l.Level {
 		return
 	}
@@ -154,8 +162,7 @@ func (l *Logger) doLog(level Level, distance int, v ...interface{}) {
 	l.Output.Write(output)
 }
 
-// spaceJoiner converts the array entries to string and joins them with a
-// whitespace.
+// spaceJoiner converts an array to string by joining its items with a space.
 func spaceJoiner(v []interface{}) string {
 	var out []string
 	for _, elem := range v {

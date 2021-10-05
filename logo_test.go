@@ -12,7 +12,7 @@ import (
 
 func TestInfo(t *testing.T) {
 	var stringBuilder strings.Builder
-	Standard.Output = &stringBuilder
+	Default.Output = &stringBuilder
 	const (
 		mode           = ".*INFO.*"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -25,7 +25,7 @@ func TestInfo(t *testing.T) {
 
 func TestDebug(t *testing.T) {
 	var stringBuilder strings.Builder
-	Standard.Output = &stringBuilder
+	Default.Output = &stringBuilder
 	const (
 		mode           = ".*DEBUG.*"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -38,7 +38,7 @@ func TestDebug(t *testing.T) {
 
 func TestWarn(t *testing.T) {
 	var stringBuilder strings.Builder
-	Standard.Output = &stringBuilder
+	Default.Output = &stringBuilder
 	const (
 		mode           = ".*WARN.*"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -51,7 +51,7 @@ func TestWarn(t *testing.T) {
 
 func TestError(t *testing.T) {
 	var stringBuilder strings.Builder
-	Standard.Output = &stringBuilder
+	Default.Output = &stringBuilder
 	const (
 		mode           = ".*ERROR.*"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -64,7 +64,7 @@ func TestError(t *testing.T) {
 
 func TestPrint(t *testing.T) {
 	var stringBuilder strings.Builder
-	Standard.Output = &stringBuilder
+	Default.Output = &stringBuilder
 	const (
 		mode           = "PRINT"
 		dateTimeMillis = "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d"
@@ -77,34 +77,34 @@ func TestPrint(t *testing.T) {
 
 func TestConfig(t *testing.T) {
 	var stringBuilder strings.Builder
-	Standard.Output = &stringBuilder
+	Default.Output = &stringBuilder
 	const (
 		mode   = "PRINT"
 		date   = "\\d\\d\\d\\d-\\d\\d-\\d\\d"
 		time   = "\\d\\d:\\d\\d:\\d\\d"
 		millis = ".\\d\\d\\d"
 	)
-	Standard.Config(DateFlag)
+	Default.Config(DateFlag)
 	Print(mode)
 	assert.Regexp(t, mode+" +"+date+": "+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Standard.Config(TimeFlag)
+	Default.Config(TimeFlag)
 	Print(mode)
 	assert.Regexp(t, mode+" +"+time+": "+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Standard.Config(MillisFlag)
+	Default.Config(MillisFlag)
 	Print(mode)
 	assert.Regexp(t, mode+" +"+millis+": "+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Standard.Config(DateFlag | TimeFlag)
+	Default.Config(DateFlag | TimeFlag)
 	Print(mode)
 	assert.Regexp(t, mode+" +"+date+" "+time+": "+mode, stringBuilder.String())
 	stringBuilder.Reset()
 
-	Standard.Config(DateFlag | TimeFlag | MillisFlag)
+	Default.Config(DateFlag | TimeFlag | MillisFlag)
 	Print(mode)
 	assert.Regexp(t, mode+" +"+date+" "+time+millis+": "+mode, stringBuilder.String())
 	stringBuilder.Reset()
@@ -112,8 +112,8 @@ func TestConfig(t *testing.T) {
 
 func TestJson(t *testing.T) {
 	var stringBuilder strings.Builder
-	Standard.Output = &stringBuilder
-	Standard.Config(1<<6 - 1)
+	Default.Output = &stringBuilder
+	Default.Config(1<<6 - 1)
 	Print("Print")
 	var expected = []string{
 		`\s+"level": "PRINT"`,
@@ -128,7 +128,7 @@ func TestJson(t *testing.T) {
 }
 
 func BenchmarkInfo(b *testing.B) {
-	Standard.Output = ioutil.Discard
+	Default.Output = ioutil.Discard
 	for i := 0; i < b.N; i++ {
 		Info(i)
 	}

@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// A Logger entry.
+// entry is a logging message.
 type entry struct {
 	Level    Level  `json:"level"`
 	Date     string `json:"date,omitempty"`
@@ -17,8 +17,7 @@ type entry struct {
 
 // Converts an entry to a string, with the Level colored.
 func (e *entry) String() string {
-	params := []string{}
-
+	var params []string
 	params = append(params, e.Level.ColorizedString())
 	if e.Date != "" {
 		params = append(params, e.Date)
@@ -36,13 +35,16 @@ func (e *entry) String() string {
 }
 
 func (e *entry) MarshalJSON() ([]byte, error) {
-	type Alias entry
+	// Overwrite level with a string representation of level
+	type alias entry
 	return json.Marshal(&struct {
+		// The new overwritten field
 		Level string `json:"level"`
-		*Alias
+		// Fill with the remaining fields from alias aka entry
+		*alias
 	}{
 		Level: e.Level.String(),
-		Alias: (*Alias)(e),
+		alias: (*alias)(e),
 	})
 }
 

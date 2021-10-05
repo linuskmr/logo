@@ -1,12 +1,12 @@
 package logo
 
-// Level is a log level of a Logger.
+// Level decides which messages get logged in a Logger.
 type Level uint8
 
 // The log Level's following are sorted in ascending order of priority.
-// DebugLevel(AllLevels), InfoLevel, WarnLevel, ErrorLevel and PrintLevel. So
-// the highest Level is PrintLevel, the lowest is DebugLevel(PrintLevel). A
-// newEntry is only logged if its level is greater or equal to the Level of the
+// DebugLevel(AllLevels), InfoLevel, WarnLevel, ErrorLevel and PrintLevel. So the
+// highest Level is PrintLevel, the lowest is DebugLevel(PrintLevel). A log
+// message is only logged if its Level is greater or equal to the Level of the
 // Logger.
 const (
 	DebugLevel = Level(iota)
