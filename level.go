@@ -41,12 +41,12 @@ var levels = [...]levelNames{
 		colorizedName: "\033[32mDEBUG\033[0m",
 	},
 	InfoLevel: {
-		name:          "INFO ",
-		colorizedName: "\033[34mINFO\033[0m",
+		name:          "INFO",
+		colorizedName: "\033[34mINFO \033[0m",
 	},
 	WarnLevel: {
-		name:          "WARN ",
-		colorizedName: "\033[33mWARN\033[0m",
+		name:          "WARN",
+		colorizedName: "\033[33mWARN \033[0m",
 	},
 	ErrorLevel: {
 		name:          "ERROR",
