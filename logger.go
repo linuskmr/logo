@@ -133,7 +133,6 @@ func (l *Logger) Warn(v ...interface{}) {
 // Fatal logs a message with FatalLevel and panics with the message in v.
 func (l *Logger) Fatal(v ...interface{}) {
 	l.doLog(FatalLevel, 1, v...)
-	panic(spaceJoiner(v))
 }
 
 // Log logs a message with the given Level.
@@ -166,6 +165,11 @@ func (l *Logger) doLog(level Level, distance int, v ...interface{}) {
 	}
 	output = append(output, []byte("\n")...)
 	l.Output.Write(output)
+
+	if level == FatalLevel {
+		// Panic on fatal log messages
+		panic(spaceJoiner(v))
+	}
 }
 
 // spaceJoiner converts an array to string by joining its items with a space.
